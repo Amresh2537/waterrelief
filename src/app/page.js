@@ -121,7 +121,7 @@ export default function Home() {
                     {/* ✅ अपनी QR code image का path यहाँ डालें */}
                     {/* Option A: अगर image public/ में है */}
                     <Image 
-                      src="/qr.png"  // public/qr.png के लिए
+                      src="/qr.PNG"  // public/qr.png के लिए
                       alt="Payment QR Code"
                       width={200}
                       height={200}
