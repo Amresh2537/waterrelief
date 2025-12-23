@@ -28,6 +28,17 @@ export default function Home() {
 
               {/* Plans Container */}
               <div className="space-y-6">
+                {/* 1 Month Plan */}
+                <div className="bg-white rounded-xl p-6 shadow-md border-2 border-blue-100 hover:border-blue-300 transition-all duration-300 hover:shadow-lg">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-xl md:text-2xl font-bold text-blue-700">01 Month Plan</h3>
+                    <div className="text-2xl md:text-3xl font-black text-gray-800">₹250</div>
+                  </div>
+                  <p className="text-gray-600">
+                    Flexible monthly plan. Perfect for short-term or trial usage with full service benefits.
+                  </p>
+                </div>
+
                 {/* 3 Months Plan */}
                 <div className="bg-white rounded-xl p-6 shadow-md border-2 border-blue-100 hover:border-blue-300 transition-all duration-300 hover:shadow-lg">
                   <div className="flex justify-between items-center mb-4">
@@ -73,11 +84,15 @@ export default function Home() {
               <div className="bg-white rounded-xl p-6 shadow-md border-2 border-blue-100 mt-8">
                 <h3 className="text-xl font-bold text-blue-800 mb-4">Available Plans:</h3>
                 <ul className="space-y-3">
-                  <li className="flex justify-between items-center py-3 border-b border-gray-100 last:border-0">
+                  <li className="flex justify-between items-center py-3 border-b border-gray-100">
+                    <span className="text-gray-700 font-medium">01 Month Plan</span>
+                    <span className="text-blue-700 font-bold">₹250</span>
+                  </li>
+                  <li className="flex justify-between items-center py-3 border-b border-gray-100">
                     <span className="text-gray-700 font-medium">03 Months Plan</span>
                     <span className="text-blue-700 font-bold">₹600</span>
                   </li>
-                  <li className="flex justify-between items-center py-3 border-b border-gray-100 last:border-0">
+                  <li className="flex justify-between items-center py-3 border-b border-gray-100">
                     <span className="text-gray-700 font-medium">06 Months Plan</span>
                     <span className="text-blue-700 font-bold">₹1080 <span className="text-green-600 text-sm">(Save ₹120)</span></span>
                   </li>
@@ -101,21 +116,56 @@ export default function Home() {
 
                 <div className="text-center">
                   <h3 className="text-xl font-bold text-blue-700 mb-6">Scan QR Code to Pay</h3>
-
+                  
                   <div className="w-56 h-56 mx-auto mb-6 bg-gray-50 rounded-xl border border-gray-200 p-4 flex items-center justify-center">
-                    {/* Replace with your QR code image */}
-                    <Image
-                      src="/qr.PNG"
-                      alt="QR Code"
+                    {/* ✅ अपनी QR code image का path यहाँ डालें */}
+                    {/* Option A: अगर image public/ में है */}
+                    <Image 
+                      src="/qr.png"  // public/qr.png के लिए
+                      alt="Payment QR Code"
                       width={200}
                       height={200}
+                      className="object-contain rounded-lg"
+                      priority
                     />
+                    
+                    {/* Option B: Placeholder अगर image नहीं है */}
+                    {/* <div className="text-center text-gray-400">
+                      <i className="fas fa-qrcode text-6xl mb-3"></i>
+                      <p className="text-sm font-medium">QR Code Image</p>
+                      <p className="text-xs mt-1">public/qr.png में डालें</p>
+                    </div> */}
                   </div>
 
                   <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
                     <p className="text-gray-700">
                       <strong className="text-blue-700">Instructions:</strong> Scan this QR code with any UPI app (Google Pay, PhonePe, Paytm, etc.) to complete your payment. After payment, share the receipt with us.
                     </p>
+                  </div>
+
+                  {/* Payment Amount Note */}
+                  <div className="mt-6 bg-yellow-50 rounded-lg p-4 border border-yellow-100">
+                    <p className="text-gray-700">
+                      <strong className="text-yellow-700">Note:</strong> Please pay the exact amount according to your selected plan:
+                    </p>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-3">
+                      <div className="text-center bg-white p-2 rounded border">
+                        <div className="text-sm text-gray-500">01 Month</div>
+                        <div className="font-bold text-gray-800">₹250</div>
+                      </div>
+                      <div className="text-center bg-white p-2 rounded border">
+                        <div className="text-sm text-gray-500">03 Months</div>
+                        <div className="font-bold text-gray-800">₹600</div>
+                      </div>
+                      <div className="text-center bg-white p-2 rounded border">
+                        <div className="text-sm text-gray-500">06 Months</div>
+                        <div className="font-bold text-gray-800">₹1080</div>
+                      </div>
+                      <div className="text-center bg-white p-2 rounded border">
+                        <div className="text-sm text-gray-500">12 Months</div>
+                        <div className="font-bold text-gray-800">₹1800</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -145,6 +195,29 @@ export default function Home() {
                     <span className="text-gray-700">Receipt will be sent to your registered email</span>
                   </li>
                 </ul>
+
+                {/* Price Comparison Table */}
+                <div className="mt-8 pt-6 border-t border-gray-100">
+                  <h4 className="text-lg font-bold text-blue-700 mb-3">Monthly Price Comparison:</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">01 Month Plan</span>
+                      <span className="font-bold text-gray-800">₹250/month</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">03 Months Plan</span>
+                      <span className="font-bold text-green-600">₹200/month <span className="text-xs text-gray-500">(Save ₹50/month)</span></span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">06 Months Plan</span>
+                      <span className="font-bold text-green-600">₹180/month <span className="text-xs text-gray-500">(Save ₹70/month)</span></span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">12 Months Plan</span>
+                      <span className="font-bold text-green-600">₹150/month <span className="text-xs text-gray-500">(Save ₹100/month)</span></span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -155,7 +228,7 @@ export default function Home() {
           <p className="text-gray-600 mb-2">
             Need help? Contact us at{' '}
             <a href="mailto:support@waterrelief.com" className="text-blue-600 font-medium hover:text-blue-800 hover:underline">
-              support@waterrelief.com
+              office.waterrelief@gmail.com
             </a>{' '}
             or call{' '}
             <a href="tel:+919354922385" className="text-blue-600 font-medium hover:text-blue-800 hover:underline">
