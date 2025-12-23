@@ -101,16 +101,14 @@ export default function Home() {
 
                 <div className="text-center">
                   <h3 className="text-xl font-bold text-blue-700 mb-6">Scan QR Code to Pay</h3>
-                  
+
                   <div className="w-56 h-56 mx-auto mb-6 bg-gray-50 rounded-xl border border-gray-200 p-4 flex items-center justify-center">
                     {/* Replace with your QR code image */}
-                    <Image 
-                      src="/qr.png" 
-                      alt="Payment QR Code"
+                    <Image
+                      src="/qr.PNG"
+                      alt="QR Code"
                       width={200}
                       height={200}
-                      className="object-contain rounded-lg"
-                      priority
                     />
                   </div>
 
