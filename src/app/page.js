@@ -307,7 +307,7 @@ export default function Home() {
                       <div className="w-56 h-56 mx-auto mb-4 bg-gray-50 rounded-xl border border-gray-200 p-4 flex items-center justify-center relative">
                         {/* QR Code Image */}
                         <Image 
-                          src="/qr.png"
+                          src="/qr.PNG"
                           alt="Payment QR Code for Creative Electronix"
                           width={200}
                           height={200}
