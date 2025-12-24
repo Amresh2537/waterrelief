@@ -6,14 +6,13 @@ export async function POST(request) {
     const body = await request.json()
     console.log('📧 Email API Called:', new Date().toISOString())
     
-    // Address removed from here - frontend से अब address नहीं आएगा
     const { 
       name, 
       mobile, 
       plan, 
       amount, 
-      screenshot,
-      toEmail = 'office.waterrelief@gmail.com' // Default email
+      screenshot, // Base64 image data
+      toEmail = 'office.waterrelief@gmail.com'
     } = body
 
     // Log received data
@@ -21,8 +20,9 @@ export async function POST(request) {
     console.log('Mobile:', mobile)
     console.log('Plan:', plan)
     console.log('Amount:', amount)
+    console.log('Screenshot received:', !!screenshot)
 
-    // Validate required fields (address removed from validation)
+    // Validate required fields
     const missingFields = []
     if (!name) missingFields.push('name')
     if (!mobile) missingFields.push('mobile')
@@ -100,7 +100,7 @@ export async function POST(request) {
       )
     }
 
-    // Create email HTML content (Address section removed)
+    // Create email HTML content
     const emailHTML = `
 <!DOCTYPE html>
 <html lang="en">
@@ -248,6 +248,14 @@ export async function POST(request) {
             font-size: 20px;
         }
         
+        .attachment-info {
+            background: #fff3e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            border-left: 4px solid #ff9800;
+        }
+        
         @media (max-width: 600px) {
             .email-body {
                 padding: 20px;
@@ -276,7 +284,7 @@ export async function POST(request) {
         <div class="email-body">
             <h2 class="section-title">Customer Payment Details</h2>
             
-            <!-- Customer Details (Address row removed) -->
+            <!-- Customer Details -->
             <div class="details-card">
                 <div class="detail-row">
                     <div class="detail-label">👤 Customer Name:</div>
@@ -313,23 +321,32 @@ export async function POST(request) {
                     <div class="detail-value">₹${amount}</div>
                 </div>
                 
-                ${screenshot ? `
-                <div class="detail-row">
+                ${
+                  screenshot ? 
+                  `<div class="detail-row">
                     <div class="detail-label">📸 Payment Proof:</div>
                     <div class="detail-value">
-                        <a href="${screenshot}" target="_blank" style="color: #2a7de1; text-decoration: none;">
-                            View Payment Screenshot
-                        </a>
+                      <strong>Payment screenshot attached to this email</strong>
                     </div>
-                </div>
-                ` : ''}
+                  </div>` 
+                  : ''
+                }
             </div>
+            
+            ${screenshot ? `
+            <div class="attachment-info">
+                <p style="margin: 0; color: #5d4037;">
+                    <strong>📎 Attachment:</strong> Payment screenshot is attached to this email as "payment-screenshot-${name}.jpg"
+                </p>
+            </div>
+            ` : ''}
             
             <!-- Action Required -->
             <div class="action-box">
                 <h3 class="action-title">✅ Action Required</h3>
                 <ol class="action-steps">
                     <li>Verify payment in bank/UPI app</li>
+                    <li>Check attached payment screenshot</li>
                     <li>Activate customer's Water Relief service</li>
                     <li>Send service confirmation via WhatsApp/SMS</li>
                 </ol>
@@ -354,7 +371,7 @@ export async function POST(request) {
 </body>
 </html>`
 
-    // Create plain text version (Address removed)
+    // Create plain text version
     const emailText = `
 WATER RELIEF PAYMENT CONFIRMATION
 =================================
@@ -370,13 +387,16 @@ PAYMENT INFORMATION:
 --------------------
 • Selected Plan: ${plan}
 • Amount Paid: ₹${amount}
-${screenshot ? `• Payment Screenshot: ${screenshot}` : ''}
+${screenshot ? `• Payment Proof: Screenshot attached to this email` : ''}
+
+${screenshot ? `📎 ATTACHMENT: Payment screenshot is attached to this email` : ''}
 
 ACTION REQUIRED:
 ----------------
 1. Verify payment in bank/UPI app
-2. Activate customer's Water Relief service
-3. Send service confirmation via WhatsApp/SMS
+2. Check attached payment screenshot
+3. Activate customer's Water Relief service
+4. Send service confirmation via WhatsApp/SMS
 
 IMPORTANT NOTES:
 ----------------
@@ -388,7 +408,7 @@ IMPORTANT NOTES:
 Automated Message - Please do not reply directly to this email.
 `
 
-    // Prepare email options
+    // Prepare email options with attachment
     const mailOptions = {
       from: `"Water Relief Payments" <${process.env.EMAIL_USER}>`,
       to: toEmail,
@@ -400,6 +420,42 @@ Automated Message - Please do not reply directly to this email.
         'X-Priority': '1',
         'X-MSMail-Priority': 'High',
         'Importance': 'high'
+      }
+    }
+
+    // Add attachment if screenshot exists
+    if (screenshot) {
+      try {
+        // Extract base64 data and filename
+        const matches = screenshot.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/)
+        
+        if (matches && matches.length === 3) {
+          const contentType = matches[1]
+          const base64Data = matches[2]
+          const buffer = Buffer.from(base64Data, 'base64')
+          
+          // Determine file extension from content type
+          let extension = 'jpg'
+          if (contentType.includes('png')) extension = 'png'
+          if (contentType.includes('gif')) extension = 'gif'
+          if (contentType.includes('jpeg')) extension = 'jpg'
+          
+          const filename = `payment-screenshot-${name.replace(/\s+/g, '-').toLowerCase()}.${extension}`
+          
+          mailOptions.attachments = [{
+            filename: filename,
+            content: buffer,
+            encoding: 'base64',
+            contentType: contentType
+          }]
+          
+          console.log(`📎 Attachment added: ${filename} (${buffer.length} bytes)`)
+        } else {
+          console.warn('⚠️ Invalid base64 image format')
+        }
+      } catch (attachmentError) {
+        console.error('❌ Error processing attachment:', attachmentError)
+        // Continue without attachment
       }
     }
 
@@ -415,6 +471,7 @@ Automated Message - Please do not reply directly to this email.
     console.log('📨 Message ID:', info.messageId)
     console.log('⏱️ Time taken:', endTime - startTime, 'ms')
     console.log('📧 Response:', info.response)
+    console.log('📎 Attachments sent:', info.accepted.length)
     
     // Return success response
     return Response.json({
@@ -422,6 +479,7 @@ Automated Message - Please do not reply directly to this email.
       message: 'Email sent successfully to ' + toEmail,
       messageId: info.messageId,
       timestamp: new Date().toISOString(),
+      hasAttachment: !!screenshot,
       deliveryDetails: {
         accepted: info.accepted,
         rejected: info.rejected,
@@ -458,6 +516,9 @@ Automated Message - Please do not reply directly to this email.
     } else if (error.message.includes('rate limit')) {
       errorMessage = 'Email sending rate limit exceeded. Please try again later.'
       errorCode = 'RATE_LIMIT'
+    } else if (error.message.includes('attachment')) {
+      errorMessage = 'Error attaching screenshot. Email sent without attachment.'
+      errorCode = 'ATTACHMENT_ERROR'
     }
     
     // Return error response
@@ -481,6 +542,7 @@ export async function GET() {
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV,
     emailConfigured: !!(process.env.EMAIL_USER && process.env.EMAIL_PASSWORD),
-    instructions: 'Send POST request with customer payment details'
+    supportsAttachments: true,
+    instructions: 'Send POST request with customer payment details and optional screenshot'
   })
 }
