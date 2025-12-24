@@ -150,14 +150,8 @@ export default function Home() {
   const openWhatsApp = () => {
     const message = encodeURIComponent(
       `🚰 *Water Relief Payment Confirmation*\n\n` +
-      `I have made payment for Water Relief service.\n\n` +
-      `*My Details:*\n` +
-      `Name: ${formData.name || '[Your Name]'}\n` +
-      `Mobile: ${formData.mobile || '[Your Mobile]'}\n` +
-      `Plan: ${formData.plan || '[Selected Plan]'}\n` +
-      `Amount: ₹${formData.amount || '[Amount]'}\n` +
-      `Address: ${formData.address || '[Your Address]'}\n\n` +
-      `Please activate my service. Thank you!`
+      `I have made payment for Water Relief service.\n\n` 
+      
     )
     window.open(`https://wa.me/919354922385?text=${message}`, '_blank')
   }
