@@ -12,11 +12,10 @@ export default function Home() {
   const [error, setError] = useState('')
   const [uploadedImage, setUploadedImage] = useState(null)
   
-  // Form data state
+  
   const [formData, setFormData] = useState({
     name: '',
     mobile: '',
-    address: '',
     plan: '',
     amount: '',
     screenshot: null,
@@ -33,7 +32,7 @@ export default function Home() {
   // Download QR Code
   const downloadQR = () => {
     const link = document.createElement('a')
-    link.href = '/qr.png'
+    link.href = '/qr.PNG'
     link.download = 'creative-electronix-payment-qr.png'
     document.body.appendChild(link)
     link.click()
@@ -91,11 +90,10 @@ export default function Home() {
     setError('')
     
     try {
-      // Prepare data for API
+      // Prepare data for API (without address)
       const emailData = {
         name: formData.name,
         mobile: formData.mobile,
-        address: formData.address,
         plan: formData.plan,
         amount: formData.amount,
         screenshot: formData.screenshot,
@@ -129,7 +127,6 @@ export default function Home() {
         setFormData({
           name: '',
           mobile: '',
-          address: '',
           plan: '',
           amount: '',
           screenshot: null,
@@ -149,9 +146,8 @@ export default function Home() {
   // Open WhatsApp with pre-filled message
   const openWhatsApp = () => {
     const message = encodeURIComponent(
-      `🚰 *Water Relief Payment Confirmation*\n\n` +
-      `I have made payment for Water Relief service.\n\n` 
-      
+      ` *Water Relief Payment Confirmation*\n\n` +
+      `I have made payment for Water Relief service.\n\n`
     )
     window.open(`https://wa.me/919354922385?text=${message}`, '_blank')
   }
@@ -161,7 +157,6 @@ export default function Home() {
     setFormData({
       name: '',
       mobile: '',
-      address: '',
       plan: '',
       amount: '',
       screenshot: null,
@@ -396,15 +391,15 @@ export default function Home() {
                           3
                         </div>
                         <div>
-                          <p className="font-medium text-gray-800">Send payment confirmation</p>
-                          <p className="text-gray-600 text-sm">Choose one of these methods:</p>
+                          <p className="font-medium text-gray-800">Upload payment screenshot</p>
+                          <p className="text-gray-600 text-sm">Upload your payment confirmation screenshot</p>
                           <div className="flex flex-wrap gap-3 mt-2">
                             <button
                               onClick={() => setShowForm(true)}
-                              className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+                              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
                             >
-                              <i className="fas fa-envelope"></i>
-                             Upload Screenshot
+                              <i className="fas fa-upload"></i>
+                              Upload Screenshot
                             </button>
                             <button
                               onClick={openWhatsApp}
@@ -418,13 +413,8 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
-
-                  
                 </div>
               </div>
-
-           
-              
             </div>
           </div>
         </div>
@@ -453,13 +443,13 @@ export default function Home() {
         </footer>
       </div>
 
-      {/* Email Form Modal */}
+      {/* Upload Screenshot Modal */}
       {showForm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold text-blue-800">Send Payment Confirmation</h3>
+                <h3 className="text-xl font-bold text-blue-800">Upload Payment Screenshot</h3>
                 <button
                   onClick={() => !loading && (setShowForm(false), resetForm())}
                   className="text-gray-500 hover:text-gray-700 disabled:opacity-50"
@@ -474,9 +464,9 @@ export default function Home() {
                   <div className="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
                     <i className="fas fa-check text-3xl text-green-600"></i>
                   </div>
-                  <h4 className="text-lg font-bold text-green-700 mb-2">Email Sent Successfully!</h4>
+                  <h4 className="text-lg font-bold text-green-700 mb-2">Payment Confirmation Sent!</h4>
                   <p className="text-gray-600 mb-4">
-                    Confirmation sent to <strong>office.waterrelief@gmail.com</strong>
+                    Your payment details have been sent successfully.
                   </p>
                   <p className="text-sm text-gray-500">
                     Your service will be activated shortly.
@@ -489,10 +479,10 @@ export default function Home() {
                       <div className="flex items-start">
                         <i className="fas fa-exclamation-circle mr-2 mt-0.5"></i>
                         <div>
-                          <p className="font-medium">Failed to send email</p>
+                          <p className="font-medium">Failed to send confirmation</p>
                           <p className="text-sm mt-1">{error}</p>
                           <p className="text-sm mt-2">
-                            Please use WhatsApp option instead, or check if backend is running.
+                            Please use WhatsApp option instead.
                           </p>
                         </div>
                       </div>
@@ -571,23 +561,7 @@ export default function Home() {
                   
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Your Complete Address *
-                    </label>
-                    <textarea
-                      name="address"
-                      value={formData.address}
-                      onChange={handleInputChange}
-                      required
-                      rows="3"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="House no, Street, Area, City, Pincode"
-                      disabled={loading}
-                    ></textarea>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Payment Screenshot 
+                      Payment Screenshot (Optional)
                     </label>
                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
                       <input
@@ -630,6 +604,9 @@ export default function Home() {
                             <p className="text-gray-500 text-sm">
                               {loading ? 'Upload disabled...' : 'Click to upload payment screenshot'}
                             </p>
+                            <p className="text-xs text-gray-400 mt-1">
+                              Max file size: 5MB (JPG, PNG, GIF)
+                            </p>
                           </div>
                         )}
                       </label>
@@ -649,7 +626,7 @@ export default function Home() {
                       {loading ? (
                         <>
                           <i className="fas fa-spinner fa-spin"></i>
-                          Sending Email...
+                          Sending Confirmation...
                         </>
                       ) : (
                         <>
@@ -662,9 +639,18 @@ export default function Home() {
                 </form>
               )}
               
-             
-              
-             
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <p className="text-sm text-gray-500 text-center mb-3">
+                  OR send directly via WhatsApp
+                </p>
+                <button
+                  onClick={openWhatsApp}
+                  className="w-full inline-flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg"
+                >
+                  <i className="fab fa-whatsapp"></i>
+                  WhatsApp +91-9354922385
+                </button>
+              </div>
             </div>
           </div>
         </div>

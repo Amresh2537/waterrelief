@@ -6,24 +6,23 @@ export async function POST(request) {
     const body = await request.json()
     console.log('📧 Email API Called:', new Date().toISOString())
     
+    // Address removed from here - frontend से अब address नहीं आएगा
     const { 
       name, 
       mobile, 
-      address, 
       plan, 
       amount, 
       screenshot,
-      toEmail = 'office.waterrelief@gmail.com' // Default test email
+      toEmail = 'office.waterrelief@gmail.com' // Default email
     } = body
 
-    // Log received data (sensitive info hidden in production)
+    // Log received data
     console.log('Customer:', name)
     console.log('Mobile:', mobile)
     console.log('Plan:', plan)
     console.log('Amount:', amount)
-    console.log('Address length:', address?.length || 0)
 
-    // Validate required fields
+    // Validate required fields (address removed from validation)
     const missingFields = []
     if (!name) missingFields.push('name')
     if (!mobile) missingFields.push('mobile')
@@ -72,7 +71,7 @@ export async function POST(request) {
       )
     }
 
-    // Create email transporter with secure configuration
+    // Create email transporter
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -80,7 +79,7 @@ export async function POST(request) {
         pass: process.env.EMAIL_PASSWORD
       },
       tls: {
-        rejectUnauthorized: false // For development/testing only
+        rejectUnauthorized: false
       }
     })
 
@@ -101,7 +100,7 @@ export async function POST(request) {
       )
     }
 
-    // Create email HTML content
+    // Create email HTML content (Address section removed)
     const emailHTML = `
 <!DOCTYPE html>
 <html lang="en">
@@ -277,7 +276,7 @@ export async function POST(request) {
         <div class="email-body">
             <h2 class="section-title">Customer Payment Details</h2>
             
-            <!-- Customer Details -->
+            <!-- Customer Details (Address row removed) -->
             <div class="details-card">
                 <div class="detail-row">
                     <div class="detail-label">👤 Customer Name:</div>
@@ -287,11 +286,6 @@ export async function POST(request) {
                 <div class="detail-row">
                     <div class="detail-label">📱 Mobile Number:</div>
                     <div class="detail-value">${mobile}</div>
-                </div>
-                
-                <div class="detail-row">
-                    <div class="detail-label">🏠 Address:</div>
-                    <div class="detail-value">${address || 'Not provided'}</div>
                 </div>
                 
                 <div class="detail-row">
@@ -337,8 +331,7 @@ export async function POST(request) {
                 <ol class="action-steps">
                     <li>Verify payment in bank/UPI app</li>
                     <li>Activate customer's Water Relief service</li>
-                    <li>Send service confirmation to customer</li>
-                    <li>Update customer record in database</li>
+                    <li>Send service confirmation via WhatsApp/SMS</li>
                 </ol>
             </div>
             
@@ -346,7 +339,7 @@ export async function POST(request) {
             <div style="background: #fff8e1; padding: 15px; border-radius: 8px; border-left: 4px solid #ffb300;">
                 <p style="color: #5d4037; margin: 0;">
                     <strong>Note:</strong> This email was automatically generated from Water Relief Payment Portal. 
-                    Please verify all details before activating the service.
+                    Customer will provide address details separately when required for service activation.
                 </p>
             </div>
         </div>
@@ -361,7 +354,7 @@ export async function POST(request) {
 </body>
 </html>`
 
-    // Create plain text version
+    // Create plain text version (Address removed)
     const emailText = `
 WATER RELIEF PAYMENT CONFIRMATION
 =================================
@@ -370,7 +363,6 @@ CUSTOMER DETAILS:
 -----------------
 • Name: ${name}
 • Mobile: ${mobile}
-• Address: ${address || 'Not provided'}
 • Payment Date: ${new Date().toLocaleDateString('en-IN')}
 • Payment Time: ${new Date().toLocaleTimeString('en-IN')}
 
@@ -384,13 +376,12 @@ ACTION REQUIRED:
 ----------------
 1. Verify payment in bank/UPI app
 2. Activate customer's Water Relief service
-3. Send service confirmation to customer
-4. Update customer record in database
+3. Send service confirmation via WhatsApp/SMS
 
 IMPORTANT NOTES:
 ----------------
 • This email was automatically generated from Water Relief Payment Portal
-• Please verify all details before activating the service
+• Customer will provide address details separately when required for service activation
 • For support: +91-9354922385 | office.waterrelief@gmail.com
 
 © ${new Date().getFullYear()} Creative Electronix - Water Relief Service
